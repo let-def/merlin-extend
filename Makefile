@@ -1,14 +1,34 @@
+all: pack-native-code pack-byte-code
+
 SOURCES = \
 	reader_helper.mli reader_helper.ml \
 	reader_def.mli  \
 	protocol_def.mli  \
 	extend_main.mli extend_main.ml
 
-LIB_PACK_NAME = merlin_extend
 RESULT = merlin_extend
-
+LIB_PACK_NAME = merlin_extend
 PACKS = compiler-libs
 
-all: pack-native-code
+LIBINSTALL_FILES =  \
+  extend_main.mli   \
+  protocol_def.mli  \
+  reader_def.mli    \
+  reader_helper.mli \
+  merlin_extend.cmi \
+  merlin_extend.cmo \
+  merlin_extend.cmx \
+  merlin_extend.o
 
 -include OCamlMakefile
+
+install: libinstall
+
+uninstall: libuninstall
+
+reinstall:
+	-$(MAKE) uninstall
+	$(MAKE) install
+
+OCAMLFLAGS += -g
+OCAMLLDFLAGS += -g

@@ -23,7 +23,7 @@ module Reader : sig
     | Print of tree list
 
   type response =
-    | Ret_not_a_reader
+    | Ret_loaded
     | Ret_tree of tree
     | Ret_tree_for_competion of complete_info * tree
     | Ret_ident of string Location.loc list
@@ -33,8 +33,11 @@ end
 
 (* Main protocol *)
 type request =
+  | Start_communication
   | Reader_request of Reader.request
 
 type response =
-  | Auxiliary of [`Notify of string | `Debug of string]
+  | Notify of string
+  | Debug of string
+  | Exception of string * string
   | Reader_response of Reader.response

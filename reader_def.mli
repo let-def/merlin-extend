@@ -88,5 +88,5 @@ module type V0 = sig
   val print : t -> tree -> string
 
   (** LATER: print and update physical location in tree *)
-  val print_with_location : t -> tree -> string
+  (*val print_with_location : t -> tree -> string*)
 end
