@@ -27,6 +27,23 @@ module Handshake : sig
 
 end
 
-(** The main entry point of an extension should be an instance of this functor.
-    No other visible side-effects should occur. *)
-val main : ?reader:Reader.t -> Description.t -> 'a
+(** The main entry point of an extension. *)
+val extension_main : ?reader:Reader.t -> Description.t -> 'a
+
+(** Helper for the driver (Merlin) *)
+module Driver : sig
+  type t
+
+  exception Extension of string * string * string
+
+  val run : string -> t
+  val stop : t -> unit
+
+  val capabilities : t -> Protocol_def.capabilities
+
+  val reader : t ->
+    ?notify:(string -> unit) ->
+    ?debug:(string -> unit) ->
+    Protocol_def.Reader.request ->
+    Protocol_def.Reader.response
+end

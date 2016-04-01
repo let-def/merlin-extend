@@ -92,12 +92,38 @@ module Handshake = struct
     | _ ->
       prerr_endline "Unexpected value after handshake.";
       exit 1
+
+  let negotiate_driver ext_name i o =
+    let magic' = really_input_string i (String.length magic_number) in
+    if magic' <> magic_number then (
+      let msg = Printf.sprintf
+          "Extension %s has incompatible protocol version %S (expected %S)"
+          ext_name magic' magic_number
+      in
+      failwith msg
+    );
+    let versions' : versions = input_value i in
+    let check_v prj name =
+      if prj versions <> prj versions' then
+        let msg = Printf.sprintf
+            "Extension %s %s has incompatible version %S (expected %S)"
+            ext_name name (prj versions') (prj versions)
+        in
+        failwith msg
+    in
+    check_v (fun x -> x.ast_impl_magic_number) "implementation AST";
+    check_v (fun x -> x.ast_intf_magic_number) "interface AST";
+    check_v (fun x -> x.cmi_magic_number) "compiled interface (CMI)";
+    check_v (fun x -> x.cmt_magic_number) "typedtree (CMT)";
+    output_value o P.Start_communication;
+    let capabilities : Protocol_def.capabilities =
+      input_value i
+    in
+    capabilities
 end
 
-(** The main entry point of an extension should be an instance of this functor.
-    No other visible side-effects should occur. *)
-
-let main ?reader desc =
+(** The main entry point of an extension. *)
+let extension_main ?reader desc =
   (* Check if invoked from Merlin *)
   begin match Sys.getenv "__MERLIN__EXTENSION__" with
   | exception Not_found ->
@@ -137,3 +163,48 @@ let main ?reader desc =
       loop ()
   in
   loop ()
+
+(** Helper for the driver (Merlin) *)
+module Driver = struct
+  type t = {
+    name: string;
+    capabilities: Protocol_def.capabilities;
+    stdin: out_channel;
+    stdout: in_channel;
+    mutable closed: bool;
+  }
+
+  exception Extension of string * string * string
+
+  let run name =
+    let (stdout, stdin) = Unix.open_process ("ocamlmerlin-" ^ name) in
+    match Handshake.negotiate_driver name stdout stdin with
+    | capabilities -> {name; capabilities; stdin; stdout; closed = false}
+    | exception exn ->
+      close_out_noerr stdin;
+      close_in_noerr stdout;
+      raise exn
+
+  let stop t =
+    close_out_noerr t.stdin;
+    close_in_noerr t.stdout;
+    t.closed <- false
+
+  let capabilities t = t.capabilities
+
+  let reader t ?(notify=ignore) ?(debug=ignore) request =
+    if t.closed then invalid_arg "Extend_main.Driver.reader: extension is closed";
+    output_value t.stdin (P.Reader_request request);
+    let rec aux () =
+      match input_value t.stdout with
+      | P.Notify str -> notify str; aux ()
+      | P.Debug str -> debug str; aux ()
+      | P.Exception (kind, msg) ->
+        stop t;
+        raise (Extension (t.name, kind, msg))
+      | P.Reader_response response ->
+        response
+    in
+    aux ()
+
+end
