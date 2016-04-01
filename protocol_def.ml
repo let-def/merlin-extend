@@ -10,7 +10,7 @@ type capabilities = {
 }
 
 (* Reader protocol *)
-module Reader : sig
+module Reader = struct
 
   open Reader_def
 
