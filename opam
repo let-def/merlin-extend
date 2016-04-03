@@ -8,11 +8,10 @@ bug-reports: "https://github.com/def-lkb/merlin-extend"
 license: "MIT"
 dev-repo: "https://github.com/def-lkb/merlin-extend.git"
 build: [
-  ["./configure" "--prefix=%{prefix}%"]
   [make]
 ]
 install: [make "install"]
-remove: ["ocamlfind" "remove" "merlin-extend"]
+remove: ["ocamlfind" "remove" "merlin_extend"]
 depends: [
   "ocamlfind" {build}
 ]
