@@ -1,9 +1,9 @@
 all: pack-native-code pack-byte-code
 
 SOURCES = \
-	reader_helper.mli reader_helper.ml \
 	reader_def.ml  \
 	protocol_def.ml  \
+	reader_helper.mli reader_helper.ml \
 	extend_main.mli extend_main.ml
 
 RESULT = merlin_extend
