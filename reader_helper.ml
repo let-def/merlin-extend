@@ -88,7 +88,7 @@ let focus_node : attribute =
 
 let classify_extension (id, _ : extension) : [`Other | `Syntax_error] =
   match id.Location.txt with
-  | "merlin.relaxed-location" -> `Syntax_error
+  | "merlin.syntax-error" -> `Syntax_error
   | _ -> `Other
 
 let classify_attribute (id, _ : attribute) : [`Other | `Relaxed_location | `Hide | `Focus] =
