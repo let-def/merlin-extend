@@ -3,12 +3,14 @@ open Parsetree
 (** Default implementation for [Reader_def.print_outcome] using
     [Oprint] from compiler-libs *)
 let print_outcome_using_oprint ppf = function
-  | Reader_def.Out_module_type x ->
-    !Oprint.out_module_type ppf x
-  | Reader_def.Out_sig_item x ->
-    !Oprint.out_sig_item ppf x
-  | Reader_def.Out_type x ->
-    !Oprint.out_type ppf x
+  | Reader_def.Out_value          x -> !Oprint.out_value ppf x
+  | Reader_def.Out_type           x -> !Oprint.out_type ppf x
+  | Reader_def.Out_class_type     x -> !Oprint.out_class_type ppf x
+  | Reader_def.Out_module_type    x -> !Oprint.out_module_type ppf x
+  | Reader_def.Out_sig_item       x -> !Oprint.out_sig_item ppf x
+  | Reader_def.Out_signature      x -> !Oprint.out_signature ppf x
+  | Reader_def.Out_type_extension x -> !Oprint.out_type_extension ppf x
+  | Reader_def.Out_phrase         x -> !Oprint.out_phrase ppf x
 
 (** Generate an extension node that will be reported as a syntax error by
     Merlin. *)
