@@ -1,24 +1,23 @@
-all: pack-native-code pack-byte-code
+all: native-code-library byte-code-library
 
 SOURCES = \
-	reader_def.ml  \
-	protocol_def.ml  \
-	reader_helper.mli reader_helper.ml \
+	extend_protocol.ml  \
+	extend_helper.mli extend_helper.ml \
 	extend_main.mli extend_main.ml
 
 RESULT = merlin_extend
-LIB_PACK_NAME = merlin_extend
 PACKS = compiler-libs
 
 LIBINSTALL_FILES =  \
-  extend_main.mli   \
-  protocol_def.ml   \
-  reader_def.ml     \
-  reader_helper.mli \
-  merlin_extend.cmi \
-  merlin_extend.cmo \
-  merlin_extend.cmx \
-  merlin_extend.o
+	extend_protocol.ml  \
+	extend_protocol.cmi \
+	extend_helper.mli \
+	extend_helper.cmi \
+	extend_main.mli \
+	extend_main.cmi \
+  merlin_extend.cma \
+  merlin_extend.cmxa \
+  merlin_extend.a
 
 -include OCamlMakefile
 
