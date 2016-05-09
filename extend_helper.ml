@@ -21,7 +21,7 @@ let syntax_error msg loc : extension =
       pstr_loc = Location.none;
       pstr_desc = Pstr_eval ({
           pexp_loc = Location.none;
-          pexp_desc = Pexp_constant (Asttypes.Const_string (msg, None));
+          pexp_desc = Pexp_constant (Parsetree.Pconst_string (msg, None));
           pexp_attributes = [];
         }, []);
     }]
@@ -105,7 +105,7 @@ let extract_syntax_error (id, payload : extension) : string * Location.t =
   let msg = match payload with
     | PStr [{
         pstr_desc = Pstr_eval ({
-            pexp_desc = Pexp_constant (Asttypes.Const_string (msg, _));
+            pexp_desc = Pexp_constant (Parsetree.Pconst_string (msg, _));
           }, _);
       }] -> msg
     | _ -> "Warning: extension produced an incorrect syntax-error node"
