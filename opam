@@ -14,4 +14,5 @@ install: [make "install"]
 remove: ["ocamlfind" "remove" "merlin_extend"]
 depends: [
   "ocamlfind" {build}
+  "cppo" {build}
 ]
