@@ -3,13 +3,14 @@ name: "merlin-extend"
 version: "0.3"
 maintainer: "Frederic Bour <frederic.bour@lakaban.net>"
 authors: "Frederic Bour <frederic.bour@lakaban.net>"
-homepage: "https://github.com/def-lkb/merlin-extend"
-bug-reports: "https://github.com/def-lkb/merlin-extend"
+homepage: "https://github.com/let-def/merlin-extend"
+bug-reports: "https://github.com/let-def/merlin-extend"
 license: "MIT"
-dev-repo: "https://github.com/def-lkb/merlin-extend.git"
+dev-repo: "https://github.com/let-def/merlin-extend.git"
 build: [
   [make]
 ]
+available: [ocaml-version >= "4.02.3"]
 install: [make "install"]
 remove: ["ocamlfind" "remove" "merlin_extend"]
 depends: [
