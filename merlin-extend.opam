@@ -1,6 +1,4 @@
 opam-version: "1.2"
-name: "merlin-extend"
-version: "0.3"
 maintainer: "Frederic Bour <frederic.bour@lakaban.net>"
 authors: "Frederic Bour <frederic.bour@lakaban.net>"
 homepage: "https://github.com/let-def/merlin-extend"
@@ -8,12 +6,10 @@ bug-reports: "https://github.com/let-def/merlin-extend"
 license: "MIT"
 dev-repo: "https://github.com/let-def/merlin-extend.git"
 build: [
-  [make]
+  ["jbuilder" "build" "-p" name "-j" jobs]
 ]
 available: [ocaml-version >= "4.02.3"]
-install: [make "install"]
-remove: ["ocamlfind" "remove" "merlin_extend"]
 depends: [
-  "ocamlfind" {build}
+  "jbuilder" {build}
   "cppo" {build}
 ]
