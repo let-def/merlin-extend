@@ -1,7 +1,7 @@
-JBUILDER ?= jbuilder
+DUNE ?= dune
 
 all:
-	$(JBUILDER) build
+	$(DUNE) build
 
 clean:
 	rm -rf _build .merlin *.install
