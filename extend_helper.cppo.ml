@@ -1,4 +1,3 @@
-(*pp cppo -V OCAML:`ocamlc -version` *)
 open Parsetree
 open Extend_protocol
 
