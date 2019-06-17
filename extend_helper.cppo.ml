@@ -30,6 +30,9 @@ let syntax_error msg loc : extension =
           pexp_loc = Location.none;
           pexp_desc = Pexp_constant (CONST_STRING (msg, None));
           pexp_attributes = [];
+#if OCAML_VERSION >= (4, 8, 0)
+          pexp_loc_stack = []
+#endif
         }, []);
     }]
   in
@@ -58,7 +61,15 @@ let syntax_error msg loc : extension =
 *)
 let relaxed_location loc : attribute =
   let str = Location.mkloc "merlin.relaxed-location" loc in
+#if OCAML_VERSION >= (4, 8, 0)
+  {
+    attr_name = str;
+    attr_payload = PStr [];
+    attr_loc = str.loc
+  }
+#else
   (str, PStr [])
+#endif
 ;;
 
 
@@ -70,7 +81,17 @@ let relaxed_location loc : attribute =
     js_of_ocaml constructs).
 *)
 let hide_node : attribute =
-  (Location.mknoloc "merlin.hide", PStr [])
+  let str = Location.mknoloc "merlin.hide" in
+#if OCAML_VERSION >= (4, 8, 0)
+  {
+    attr_name = str;
+    attr_payload = PStr [];
+    attr_loc = str.loc
+  }
+#else
+  (str, PStr [])
+#endif
+
 
 (** The converse: when merlin should focus on a specific node of the AST.
     The main use case is also for js_of_ocaml.
@@ -90,7 +111,16 @@ let hide_node : attribute =
     and [M.epilog]), add a [focus_node] attribute to the [M.code] item.
 *)
 let focus_node : attribute =
-  (Location.mknoloc "merlin.focus", PStr [])
+  let str = Location.mknoloc "merlin.focus" in
+#if OCAML_VERSION >= (4, 8, 0)
+  {
+    attr_name = str;
+    attr_payload = PStr [];
+    attr_loc = str.loc
+  }
+#else
+  (str, PStr [])
+#endif
 
 (* Projections for merlin attributes and extensions *)
 
@@ -99,8 +129,12 @@ let classify_extension (id, _ : extension) : [`Other | `Syntax_error] =
   | "merlin.syntax-error" -> `Syntax_error
   | _ -> `Other
 
-let classify_attribute (id, _ : attribute) : [`Other | `Relaxed_location | `Hide | `Focus] =
-  match id.Location.txt with
+let classify_attribute (attr : attribute) : [`Other | `Relaxed_location | `Hide | `Focus] =
+#if OCAML_VERSION >= (4, 8, 0)
+  match attr.Parsetree.attr_name.Location.txt with
+#else
+  match (fst attr).Location.txt with
+#endif
   | "merlin.relaxed-location" -> `Relaxed_location
   | "merlin.hide" -> `Hide
   | "merlin.focus" -> `Focus
@@ -112,13 +146,17 @@ let extract_syntax_error (id, payload : extension) : string * Location.t =
   let msg = match payload with
     | PStr [{
         pstr_desc = Pstr_eval ({
-            pexp_desc = Pexp_constant (CONST_STRING (msg, _));
-          }, _);
+            pexp_desc = Pexp_constant (CONST_STRING (msg, _)); _
+          }, _); _
       }] -> msg
     | _ -> "Warning: extension produced an incorrect syntax-error node"
   in
   msg, id.Location.loc
 
 let extract_relaxed_location : attribute -> Location.t = function
+#if OCAML_VERSION >= (4, 8, 0)
+  | { attr_name = {Location. txt = "merlin.relaxed-location"; loc}; _ } -> loc
+#else
   | ({Location. txt = "merlin.relaxed-location"; loc} , _) -> loc
+#endif
   | _ -> invalid_arg "Merlin_extend.Reader_helper.extract_relaxed_location"
