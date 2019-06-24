@@ -19,3 +19,4 @@ synopsis: "A protocol to provide custom frontend to Merlin"
 description: """
 This protocol allows to replace the OCaml frontend of Merlin.
 It extends what used to be done with the `-pp' flag to handle a few more cases."""
+doc: "https://let-def.github.io/merlin-extend"
