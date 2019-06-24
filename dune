@@ -11,3 +11,7 @@
  (flags
   (:standard -w -50))
  (wrapped false))
+
+(install 
+ (section lib) 
+ (files (META.transition as ../merlin_extend/META)))

@@ -1,5 +1,0 @@
-version = "0.3"
-description = "SDK for making Merlin extensions"
-
-archive(byte) = "merlin_extend.cma"
-archive(native) = "merlin_extend.cmxa"
