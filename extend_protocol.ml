@@ -77,7 +77,7 @@ module Reader = struct
 
         The simplest implementation is:
 
-            let for_completion t _ = ({complete_labels = true}, (tree t))
+            [let for_completion t _ = ({complete_labels = true}, (tree t))]
 
         But it might be worthwhile to specialize the parsetree for a better
         completion.
