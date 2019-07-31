@@ -1,3 +1,9 @@
+merlin-extend v0.5
+==================
+
+Remove META.transition (defining `merlin_extend`) because reasons (no pun
+intended, fix #11).
+
 merlin-extend v0.4 
 ==================
 Mon Jun 24 11:49:32 CEST 2019
