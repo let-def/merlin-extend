@@ -27,7 +27,11 @@ let syntax_error msg loc : extension =
       pstr_loc = Location.none;
       pstr_desc = Pstr_eval ({
           pexp_loc = Location.none;
+#if OCAML_VERSION >= (4, 11, 0)
+          pexp_desc = Pexp_constant (CONST_STRING (msg, Location.none,None));
+#else
           pexp_desc = Pexp_constant (CONST_STRING (msg, None));
+#endif
           pexp_attributes = [];
 #if OCAML_VERSION >= (4, 8, 0)
           pexp_loc_stack = []
@@ -145,7 +149,11 @@ let extract_syntax_error (id, payload : extension) : string * Location.t =
   let msg = match payload with
     | PStr [{
         pstr_desc = Pstr_eval ({
+#if OCAML_VERSION >= (4, 11, 0)
+            pexp_desc = Pexp_constant (CONST_STRING (msg, _, _)); _
+#else
             pexp_desc = Pexp_constant (CONST_STRING (msg, _)); _
+#endif
           }, _); _
       }] -> msg
     | _ -> "Warning: extension produced an incorrect syntax-error node"
