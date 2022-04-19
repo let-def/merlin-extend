@@ -1,3 +1,13 @@
+merlin-extend v0.6.1
+==================
+
+Add missing dependency on unix (fix by @dra27)
+
+merlin-extend v0.6
+==================
+
+Add support for OCaml 4.11
+
 merlin-extend v0.5
 ==================
 
