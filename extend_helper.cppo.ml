@@ -11,12 +11,48 @@ open Extend_protocol
     [Oprint] from compiler-libs *)
 let print_outcome_using_oprint ppf = function
   | Reader.Out_value          x -> !Oprint.out_value ppf x
-  | Reader.Out_type           x -> !Oprint.out_type ppf x
-  | Reader.Out_class_type     x -> !Oprint.out_class_type ppf x
-  | Reader.Out_module_type    x -> !Oprint.out_module_type ppf x
-  | Reader.Out_sig_item       x -> !Oprint.out_sig_item ppf x
-  | Reader.Out_signature      x -> !Oprint.out_signature ppf x
-  | Reader.Out_type_extension x -> !Oprint.out_type_extension ppf x
+  | Reader.Out_type           x ->
+#if OCAML_VERSION >= (5,3,0)
+      (Format_doc.compat !Oprint.out_type)
+#else
+      !Oprint.out_type
+#endif
+    ppf x
+  | Reader.Out_class_type     x ->
+#if OCAML_VERSION >= (5,3,0)
+      (Format_doc.compat !Oprint.out_class_type)
+#else
+      !Oprint.out_class_type
+#endif
+      ppf x
+  | Reader.Out_module_type    x ->
+#if OCAML_VERSION >= (5,3,0)
+      (Format_doc.compat !Oprint.out_module_type)
+#else
+      !Oprint.out_module_type
+#endif
+      ppf x
+  | Reader.Out_sig_item       x ->
+#if OCAML_VERSION >= (5,3,0)
+      (Format_doc.compat !Oprint.out_sig_item)
+#else
+      !Oprint.out_sig_item
+#endif
+      ppf x
+  | Reader.Out_signature      x ->
+#if OCAML_VERSION >= (5,3,0)
+      (Format_doc.compat !Oprint.out_signature)
+#else
+      !Oprint.out_signature
+#endif
+      ppf x
+  | Reader.Out_type_extension x ->
+#if OCAML_VERSION >= (5,3,0)
+      (Format_doc.compat !Oprint.out_type_extension)
+#else
+      !Oprint.out_type_extension
+#endif
+      ppf x
   | Reader.Out_phrase         x -> !Oprint.out_phrase ppf x
 
 (** Generate an extension node that will be reported as a syntax error by
@@ -27,7 +63,12 @@ let syntax_error msg loc : extension =
       pstr_loc = Location.none;
       pstr_desc = Pstr_eval ({
           pexp_loc = Location.none;
-#if OCAML_VERSION >= (4, 11, 0)
+#if OCAML_VERSION >= (5, 3, 0)
+          pexp_desc = Pexp_constant {
+            pconst_desc = (CONST_STRING (msg, Location.none, None));
+            pconst_loc = Location.none
+          };
+#elif OCAML_VERSION >= (4, 11, 0)
           pexp_desc = Pexp_constant (CONST_STRING (msg, Location.none,None));
 #else
           pexp_desc = Pexp_constant (CONST_STRING (msg, None));
@@ -149,7 +190,9 @@ let extract_syntax_error (id, payload : extension) : string * Location.t =
   let msg = match payload with
     | PStr [{
         pstr_desc = Pstr_eval ({
-#if OCAML_VERSION >= (4, 11, 0)
+#if OCAML_VERSION >= (5, 3, 0)
+            pexp_desc = Pexp_constant { pconst_desc = (CONST_STRING (msg, _, _)); _ }; _
+#elif OCAML_VERSION >= (4, 11, 0)
             pexp_desc = Pexp_constant (CONST_STRING (msg, _, _)); _
 #else
             pexp_desc = Pexp_constant (CONST_STRING (msg, _)); _
