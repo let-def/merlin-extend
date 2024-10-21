@@ -1,3 +1,8 @@
+merlin-extend v0.6.2
+==================
+
+Add OCaml 5.3 support (contributed by @anmonteiro)
+
 merlin-extend v0.6.1
 ==================
 
